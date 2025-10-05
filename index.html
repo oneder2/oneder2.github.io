@@ -1,74 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- 个人作品集网站主页 -->
+    <!-- 功能：展示个人项目、艺术作品和联系方式 -->
+    <!-- 技术栈：HTML5 + CSS3 + JavaScript -->
+    <!-- 作者：Oneder -->
+    <!-- 版本：v1.1 -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oneder | Personal Portfolio</title>
+    
+    <!-- Google Fonts - Inter字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 主样式文件 -->
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- 顶部导航栏 -->
+    <!-- 功能：提供页面导航，支持平滑滚动到对应区域 -->
+    <!-- 样式：固定定位，响应式设计，移动端适配 -->
     <header>
         <nav>
-            <div class="logo">Oneder</div>
-            <ul>
-                <li><a href="#about">About Me</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#gallery">Artwork</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+            <div class="nav-content">
+                <div class="logo">Oneder</div>
+                <ul>
+                    <li><a href="#summary" data-en="Summary" data-zh="简介">Summary</a></li>
+                    <li><a href="#skills" data-en="Skills" data-zh="技能">Skills</a></li>
+                    <li><a href="#projects" data-en="Projects" data-zh="项目">Projects</a></li>
+                    <li class="language-switcher">
+                        <button id="lang-toggle" class="lang-btn" title="Switch Language">
+                            <span class="lang-text">中文</span>
+                            <i class="fas fa-globe"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </header>
 
     <main>
-        <section id="hero">
-            <div class="hero-text">
-                <h1>Hello, I'm Oneder</h1>
-                <p>A creator passionate about software development & digital art.</p>
-                <a href="#projects" class="cta-button">View My Projects</a>
-            </div>
-        </section>
+        <div class="main-sections">
+            <!-- 个人信息区域 -->
+            <section id="header">
+                <div class="profile-section">
+                    <img src="assets/profile.jpg" alt="Profile Picture" class="profile-pic">
+                    <div class="profile-info">
+                        <h1 data-en="Gellar" data-zh="Gellar">Gellar</h1>
+                        <p class="title" data-en="Software Developer & Digital Artist" data-zh="软件开发工程师 & 数字艺术家">Software Developer & Digital Artist</p>
+                        <p class="location" data-en="Having college in the United States" data-zh="在美留学">Based in China</p>
+                    </div>
+                </div>
+                <div class="contact-info">
+                    <a href="mailto:gellar0703@gmail.com"><i class="fas fa-envelope"></i> gellar0703@gmail.com</a>
+                    <a href="https://github.com/oneder2" target="_blank"><i class="fab fa-github"></i> github.com/oneder2</a>
+                    <a href="https://www.linkedin.com/in/muyao-niu-387468351/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                </div>
+            </section>
 
-        <section id="about">
-            <h2>About Me</h2>
-            <div class="about-content">
-                <img src="images/profile.jpg" alt="Your profile picture" class="profile-pic">
-                <p>I am a developer and creator passionate about both technology and art. I specialize in software development using Python, Java, and C++, and have a solid understanding of web development (HTML, CSS, JavaScript). In the realm of art, I enjoy exploring digital painting and 3D modeling, and love to bring creativity into every project I undertake.</p>
-            </div>
-        </section>
+            <!-- 个人简介 -->
+            <section id="summary">
+                <h2 data-en="Summary" data-zh="个人简介">Summary</h2>
+                <p data-en="Passionate developer and digital artist with expertise in software development using Python, Java, and C++. Strong foundation in web development (HTML, CSS, JavaScript) and experience in digital art creation including digital painting and 3D modeling. Committed to bringing creativity and technical excellence to every project." data-zh="热衷于技术和艺术的开发者和数字艺术家，专精于使用Python、Java和C++进行软件开发。在Web开发（HTML、CSS、JavaScript）方面有扎实的基础，并在数字艺术创作方面有丰富经验，包括数字绘画和3D建模。致力于将创意和技术卓越融入到每一个项目中。">Passionate developer and digital artist with expertise in software development using Python, Java, and C++. Strong foundation in web development (HTML, CSS, JavaScript) and experience in digital art creation including digital painting and 3D modeling. Committed to bringing creativity and technical excellence to every project.</p>
+            </section>
 
-        <section id="projects">
-            <h2>My Projects</h2>
-            <div id="project-list" class="project-grid">
-                <!-- GitHub projects will be dynamically loaded here by JavaScript -->
-                <p class="loading">Loading projects from GitHub...</p>
-            </div>
-        </section>
+            <!-- 技能 -->
+            <section id="skills">
+                <h2 data-en="Technical Skills" data-zh="技术技能">Technical Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3 data-en="Programming Languages" data-zh="编程语言">Programming Languages</h3>
+                        <ul>
+                            <li>Python</li>
+                            <li>Java</li>
+                            <li>C#</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3 data-en="Web Technologies" data-zh="Web技术">Web Technologies</h3>
+                        <ul>
+                            <li>HTML5/CSS3/JS</li>
+                            <li>Git & GitHub</li>
+                            <li>Next.js</li>
+                            <li>N8N</li>
+                            <li>Supabase</li>
+                            <li>AWS Amplify</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3 data-en="Digital Art" data-zh="数字艺术">Digital Art</h3>
+                        <ul>
+                            <li>Digital Painting</li>
+                            <li>Photoshop/Krita</li>
+                            <li>UI/UX Design</li>
+                            <li>Gaming Art</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
-        <section id="gallery">
-            <h2>Artwork</h2>
-            <!-- Artwork will be dynamically loaded here by JavaScript -->
-            <div id="gallery-grid" class="gallery-grid">
-                <p class="loading">Loading artwork...</p>
-            </div>
-        </section>
-
-        <section id="contact">
-            <h2>Contact Me</h2>
-            <p>You can find me on the following platforms:</p>
-            <div class="social-links">
-                <a href="https://github.com/oneder2" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                <a href="https://www.linkedin.com/in/your-profile" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                <a href="mailto:oneder@example.com"><i class="fas fa-envelope"></i> Email</a>
-            </div>
-        </section>
+            <!-- 项目经验 -->
+            <section id="projects">
+                <h2 data-en="Featured Projects" data-zh="精选项目">Featured Projects</h2>
+                <div id="project-list" class="projects-list">
+                    <p class="loading" data-en="Loading projects..." data-zh="正在加载项目...">Loading projects...</p>
+                </div>
+            </section>
+        </div>
     </main>
 
+    <!-- 页脚 -->
+    <!-- 功能：显示版权信息 -->
+    <!-- 样式：深色背景，居中文字 -->
     <footer>
-        <p>&copy; 2025 Oneder. All Rights Reserved.</p>
+        <div class="footer-content">
+            <p>&copy; 2025 Oneder. All Rights Reserved.</p>
+        </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- 主JavaScript文件 -->
+    <!-- 功能：动态加载GitHub项目、艺术作品图片、lightbox功能等 -->
+    <script src="scripts.js"></script>
 </body>
 </html>
 

@@ -1,0 +1,74 @@
+{
+  "projects": [
+    {
+      "id": "mentia",
+      "name": "Mentia - AI Personal Workspace",
+      "name_zh": "Mentia - AI个人工作空间",
+      "description": "An AI motivated Personal workspace, realized with PostgreSQL to store data and vectorized information (pgvector), Django (backend), Next.js (frontend). Full duty role with comprehensive development responsibilities.",
+      "description_zh": "由AI驱动的个人工作空间，使用PostgreSQL存储数据和向量化信息(pgvector)，Django(后端)，Next.js(前端)。全职开发角色，负责全面的开发工作。",
+      "technologies": ["PostgreSQL", "pgvector", "Django", "Next.js", "Python", "JavaScript", "AI"],
+      "technologies_zh": ["PostgreSQL", "pgvector", "Django", "Next.js", "Python", "JavaScript", "AI"],
+      "github_url": "https://github.com/oneder2/mentia",
+      "demo_url": null,
+      "image": "assets/mentia-preview.jpg",
+      "featured": true,
+      "date": "2025-08"
+    },
+    {
+      "id": "findu",
+      "name": "FindU - AI Requirement Generator",
+      "name_zh": "FindU - AI需求生成器",
+      "description": "A requirement generator motivated by AI. Realized with Django (backend), Next.js (frontend), SQLite (database), Qwen (AI model). Leader & full stack developer role with complete project ownership.",
+      "description_zh": "由AI驱动的需求生成器。使用Django(后端)、Next.js(前端)、SQLite(数据库)、Qwen(AI模型)实现。担任项目领导者和全栈开发者，负责完整的项目开发。",
+      "technologies": ["Django", "Next.js", "SQLite", "Qwen", "Python", "JavaScript", "AI"],
+      "technologies_zh": ["Django", "Next.js", "SQLite", "Qwen", "Python", "JavaScript", "AI"],
+      "github_url": "https://github.com/oneder2/findu",
+      "demo_url": "https://findu.shuyutech.online/",
+      "image": "assets/findu-preview.jpg",
+      "featured": true,
+      "date": "2025-07"
+    },
+    {
+      "id": "surfsmart",
+      "name": "SurfSmart - AI Website Research",
+      "name_zh": "SurfSmart - AI网站研究工具",
+      "description": "The project is set up for 2025 UMD BitCamp, the main purpose is to improve website researching strategy by applying AI techniques. Frontend and fullstack reconstructor role with modern tech stack integration.",
+      "description_zh": "为2025年UMD BitCamp设置的项目，主要目的是通过应用AI技术改进网站研究策略。担任前端和全栈重构者，负责现代技术栈集成。",
+      "technologies": ["Python", "SQL", "React", "Flask", "MongoDB", "Langchain", "LLM"],
+      "technologies_zh": ["Python", "SQL", "React", "Flask", "MongoDB", "Langchain", "LLM"],
+      "github_url": null,
+      "demo_url": null,
+      "image": "assets/surfsmart-preview.jpg",
+      "featured": true,
+      "date": "2025-04"
+    },
+    {
+      "id": "twilight-zone",
+      "name": "Twilight Zone - 2D Horror Game",
+      "name_zh": "Twilight Zone - 2D恐怖游戏",
+      "description": "Unity engine motivated 2D storytelling & horror game. The purpose of the game is to figure out the way to save your friends by special game design, and explore the truth. Got inspired by 《House》. Full duty development with complete game creation.",
+      "description_zh": "使用Unity引擎开发的2D叙事恐怖游戏。游戏目的是通过特殊的游戏设计找到拯救朋友的方法，并探索真相。灵感来源于《House》。全职开发，负责完整的游戏创作。",
+      "technologies": ["C#", "Unity", "Aseprite", "Krita", "Beepbox", "Game Design"],
+      "technologies_zh": ["C#", "Unity", "Aseprite", "Krita", "Beepbox", "游戏设计"],
+      "github_url": "https://github.com/oneder2/twilight-zone",
+      "demo_url": null,
+      "image": "assets/twilight-zone-preview.jpg",
+      "featured": true,
+      "date": "2025-02"
+    },
+    {
+      "id": "personal-website",
+      "name": "Personal Resume Website",
+      "name_zh": "个人简历网站",
+      "description": "A clean, minimalist professional resume website built with vanilla HTML, CSS, and JavaScript. Features responsive design, bilingual support, and optimized performance.",
+      "description_zh": "使用原生HTML、CSS和JavaScript构建的简洁、极简风专业简历网站。具有响应式设计、双语支持和优化的性能。",
+      "technologies": ["HTML5", "CSS3", "JavaScript", "GitHub Pages"],
+      "technologies_zh": ["HTML5", "CSS3", "JavaScript", "GitHub Pages"],
+      "github_url": "https://github.com/oneder2/oneder2.github.io",
+      "demo_url": "https://oneder2.github.io",
+      "image": "assets/website-preview.jpg",
+      "featured": true,
+      "date": "2024-12"
+    }
+  ]
+}
