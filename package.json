@@ -1,0 +1,17 @@
+{
+  "name": "oneder-resume",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A structured, bilingual resume published as a website, JSON API, and LaTeX PDF.",
+  "scripts": {
+    "validate": "node tools/resume-tools.mjs validate",
+    "generate:tex": "node tools/resume-tools.mjs tex",
+    "build": "node tools/resume-tools.mjs build",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "yaml": "^2.8.1"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://resume.gellaronline.cc/schema/resume.schema.json",
+  "title": "Gellar structured resume",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "updated_at", "profile", "skills", "experience", "education", "projects", "settings"],
+  "$defs": {
+    "localizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "zh"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1 },
+        "zh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "localizedLines": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "zh"],
+      "properties": {
+        "en": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "zh": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}(-[0-9]{2})?$"
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "pattern": "^https://" },
+        "demo": { "type": "string", "pattern": "^https://" },
+        "case_study": { "type": "string", "pattern": "^https://" }
+      }
+    },
+    "timelineEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "organization", "title", "start", "end", "highlights", "visibility"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "organization": { "$ref": "#/$defs/localizedText" },
+        "title": { "$ref": "#/$defs/localizedText" },
+        "location": { "$ref": "#/$defs/localizedText" },
+        "start": { "$ref": "#/$defs/date" },
+        "end": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+        "summary": { "$ref": "#/$defs/localizedText" },
+        "highlights": { "$ref": "#/$defs/localizedLines" },
+        "visibility": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["web", "pdf", "api"] }
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "updated_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "full_name", "headline", "location", "summary", "avatar", "contacts"],
+      "properties": {
+        "name": { "$ref": "#/$defs/localizedText" },
+        "full_name": { "$ref": "#/$defs/localizedText" },
+        "headline": { "$ref": "#/$defs/localizedText" },
+        "location": { "$ref": "#/$defs/localizedText" },
+        "summary": { "$ref": "#/$defs/localizedText" },
+        "avatar": { "type": "string", "pattern": "^assets/" },
+        "contacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "label", "value", "url"],
+            "properties": {
+              "type": { "enum": ["email", "phone", "website", "github", "linkedin", "location", "other"] },
+              "label": { "type": "string", "minLength": 1 },
+              "value": { "type": "string", "minLength": 1 },
+              "url": { "type": "string", "pattern": "^(https://|mailto:|tel:)" }
+            }
+          }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "items"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "name": { "$ref": "#/$defs/localizedText" },
+          "items": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "experience": { "type": "array", "items": { "$ref": "#/$defs/timelineEntry" } },
+    "education": { "type": "array", "items": { "$ref": "#/$defs/timelineEntry" } },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "summary", "start", "end", "technologies", "highlights", "links", "featured", "visibility"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "name": { "$ref": "#/$defs/localizedText" },
+          "summary": { "$ref": "#/$defs/localizedText" },
+          "role": { "$ref": "#/$defs/localizedText" },
+          "start": { "$ref": "#/$defs/date" },
+          "end": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+          "involvement": { "enum": ["creator", "contributor", "collaborator"] },
+          "technologies": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "highlights": {
+            "anyOf": [
+              { "type": "array", "maxItems": 0 },
+              { "$ref": "#/$defs/localizedLines" }
+            ]
+          },
+          "links": { "$ref": "#/$defs/links" },
+          "featured": { "type": "boolean" },
+          "visibility": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "enum": ["web", "pdf", "api"] }
+          }
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_language", "pdf"],
+      "properties": {
+        "default_language": { "enum": ["en", "zh"] },
+        "pdf": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["project_limit", "filename"],
+          "properties": {
+            "project_limit": { "type": "integer", "minimum": 1 },
+            "filename": { "$ref": "#/$defs/localizedText" }
+          }
+        }
+      }
+    }
+  }
+}

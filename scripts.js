@@ -1,290 +1,221 @@
-/*
- * 极简风个人简历JavaScript
- * 
- * 功能模块：
- * 1. GitHub项目加载
- * 2. 双语切换系统
- * 3. 平滑滚动导航
- * 4. 响应式交互
- * 
- * 设计理念：
- * - 专注于内容展示，减少复杂交互
- * - 优雅的错误处理
- * - 性能优化
- */
+const UI = {
+    en: {
+        navProfile: 'Profile', navExperience: 'Experience', navProjects: 'Projects',
+        recordLabel: 'Professional record', downloadPdf: 'Download PDF', updated: 'Updated',
+        contact: 'Contact', skills: 'Skills', profile: 'Profile', experience: 'Experience',
+        education: 'Education', projects: 'Selected projects', loading: 'Loading resume...',
+        loadErrorTitle: 'Resume data could not be loaded.',
+        loadErrorBody: 'Run the site through a local web server and try again.',
+        footerLabel: 'Structured resume', schemaLabel: 'Schema', present: 'Present',
+        source: 'Source', demo: 'Live site', case_study: 'Case study',
+        creator: 'Creator', contributor: 'Contributor', collaborator: 'Collaborator',
+    },
+    zh: {
+        navProfile: '简介', navExperience: '经历', navProjects: '项目',
+        recordLabel: '职业履历', downloadPdf: '下载 PDF', updated: '更新于',
+        contact: '联系方式', skills: '专业技能', profile: '个人简介', experience: '工作经历',
+        education: '教育经历', projects: '精选项目', loading: '正在加载简历...',
+        loadErrorTitle: '无法加载简历数据。', loadErrorBody: '请通过本地 Web 服务器运行站点后重试。',
+        footerLabel: '结构化简历', schemaLabel: '数据规范', present: '至今',
+        source: '源代码', demo: '在线访问', case_study: '项目详情',
+        creator: '创建者', contributor: '参与者', collaborator: '协作者',
+    },
+};
 
-// 全局变量
-const GITHUB_USERNAME = 'oneder2';
-const REPOS_PER_PAGE = 6;
-let currentLang = 'en';
+const CONTACT_ICONS = {
+    email: 'fa-solid fa-envelope', phone: 'fa-solid fa-phone', website: 'fa-solid fa-globe',
+    github: 'fa-brands fa-github', linkedin: 'fa-brands fa-linkedin-in',
+    location: 'fa-solid fa-location-dot', other: 'fa-solid fa-link',
+};
 
-/**
- * 从静态JSON文件加载项目数据
- * 功能：读取本地项目数据文件并展示在简历中
- */
-async function loadProjects() {
-    const projectList = document.getElementById('project-list');
-    
+let resume;
+let language = new URLSearchParams(window.location.search).get('lang')
+    || localStorage.getItem('resume-language') || 'en';
+if (!['en', 'zh'].includes(language)) language = 'en';
+
+function localized(value) {
+    return value?.[language] ?? '';
+}
+
+function element(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+
+function formatDate(value) {
+    if (!value) return UI[language].present;
+    const [year, month] = value.split('-').map(Number);
+    if (!month) return String(year);
+    if (language === 'zh') return `${year}.${String(month).padStart(2, '0')}`;
+    return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+        .format(new Date(Date.UTC(year, month - 1, 1)));
+}
+
+function formatRange(entry) {
+    if (entry.start === entry.end) return formatDate(entry.start);
+    return `${formatDate(entry.start)} - ${formatDate(entry.end)}`;
+}
+
+function renderStaticText() {
+    document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-ui]').forEach((node) => {
+        const value = UI[language][node.dataset.ui];
+        if (value) node.textContent = value;
+    });
+    const toggle = document.getElementById('language-toggle');
+    toggle.querySelector('span').textContent = language === 'zh' ? 'EN' : '中文';
+    toggle.setAttribute('aria-label', language === 'zh' ? 'Switch to English' : '切换到中文');
+}
+
+function renderProfile() {
+    const profile = resume.profile;
+    const name = localized(profile.name);
+    document.title = `${name} | ${localized(profile.headline)}`;
+    document.getElementById('nav-name').textContent = name;
+    document.getElementById('profile-name').textContent = name;
+    document.getElementById('footer-name').textContent = name;
+    document.getElementById('profile-headline').textContent = localized(profile.headline);
+    document.getElementById('profile-location').lastChild.textContent = ` ${localized(profile.location)}`;
+    document.getElementById('profile-summary').textContent = localized(profile.summary);
+    const avatar = document.getElementById('profile-avatar');
+    avatar.src = profile.avatar;
+    avatar.alt = language === 'zh' ? `${name} 的照片` : `Portrait of ${name}`;
+    document.getElementById('updated-at').textContent = resume.updated_at;
+    document.getElementById('record-version').textContent = `v${resume.schema_version}`;
+    document.getElementById('footer-version').textContent = `v${resume.schema_version}`;
+    document.getElementById('pdf-download').href = `downloads/${resume.settings.pdf.filename[language]}`;
+}
+
+function renderContacts() {
+    const list = document.getElementById('contact-list');
+    list.replaceChildren();
+    resume.profile.contacts.forEach((contact) => {
+        const item = element('li');
+        const link = element('a');
+        link.href = contact.url;
+        if (!contact.url.startsWith('mailto:') && !contact.url.startsWith('tel:')) {
+            link.target = '_blank';
+            link.rel = 'noreferrer';
+        }
+        const icon = element('i', CONTACT_ICONS[contact.type] || CONTACT_ICONS.other);
+        icon.setAttribute('aria-hidden', 'true');
+        link.append(icon, element('span', '', contact.value));
+        item.append(link);
+        list.append(item);
+    });
+}
+
+function renderSkills() {
+    const list = document.getElementById('skills-list');
+    list.replaceChildren();
+    resume.skills.forEach((group) => {
+        const section = element('section', 'skill-group');
+        section.append(element('h3', '', localized(group.name)));
+        const items = element('ul', 'skill-items');
+        group.items.forEach((skill) => items.append(element('li', '', skill)));
+        section.append(items);
+        list.append(section);
+    });
+}
+
+function renderHighlights(parent, highlights) {
+    const lines = Array.isArray(highlights) ? highlights : localized(highlights);
+    if (!lines?.length) return;
+    const list = element('ul', 'highlights');
+    lines.forEach((line) => list.append(element('li', '', line)));
+    parent.append(list);
+}
+
+function renderTimeline(collectionName) {
+    const section = document.getElementById(collectionName);
+    const entries = resume[collectionName].filter((entry) => entry.visibility.includes('web'));
+    section.hidden = entries.length === 0;
+    document.querySelector(`[data-section-link="${collectionName}"]`)?.toggleAttribute('hidden', entries.length === 0);
+    if (entries.length === 0) return;
+    const list = document.getElementById(`${collectionName}-list`);
+    list.replaceChildren();
+    entries.forEach((entry) => {
+        const article = element('article', 'timeline-entry');
+        const body = element('div', 'entry-body');
+        const heading = element('div', 'entry-heading');
+        heading.append(element('h3', '', localized(entry.title)), element('span', 'entry-id', entry.id));
+        body.append(heading, element('p', 'entry-organization', localized(entry.organization)));
+        if (entry.summary) body.append(element('p', 'entry-summary', localized(entry.summary)));
+        renderHighlights(body, entry.highlights);
+        article.append(element('time', 'entry-date', formatRange(entry)), body);
+        list.append(article);
+    });
+}
+
+function renderProjects() {
+    const list = document.getElementById('project-list');
+    list.replaceChildren();
+    resume.projects.filter((project) => project.featured && project.visibility.includes('web'))
+        .forEach((project) => {
+            const article = element('article', 'project-entry');
+            const top = element('div', 'project-topline');
+            top.append(element('span', 'project-id', project.id), element('time', 'project-date', formatRange(project)));
+            const heading = element('div', 'project-heading');
+            heading.append(element('h3', '', localized(project.name)));
+            if (project.involvement) heading.append(element('span', 'involvement', UI[language][project.involvement]));
+            article.append(top, heading, element('p', 'project-summary', localized(project.summary)));
+            renderHighlights(article, project.highlights);
+            const meta = element('div', 'project-meta');
+            const tech = element('ul', 'tech-list');
+            project.technologies.forEach((item) => tech.append(element('li', '', item)));
+            meta.append(tech);
+            const links = element('div', 'project-links');
+            Object.entries(project.links).forEach(([type, url]) => {
+                const link = element('a', '', UI[language][type]);
+                link.href = url;
+                link.target = '_blank';
+                link.rel = 'noreferrer';
+                const icon = element('i', type === 'source' ? 'fa-brands fa-github' : 'fa-solid fa-arrow-up-right-from-square');
+                icon.setAttribute('aria-hidden', 'true');
+                link.prepend(icon);
+                links.append(link);
+            });
+            if (links.children.length) meta.append(links);
+            article.append(meta);
+            list.append(article);
+        });
+}
+
+function render() {
+    renderStaticText();
+    renderProfile();
+    renderContacts();
+    renderSkills();
+    renderTimeline('experience');
+    renderTimeline('education');
+    renderProjects();
+    document.getElementById('resume-content').setAttribute('aria-busy', 'false');
+}
+
+async function initialize() {
+    renderStaticText();
     try {
-        // 显示加载状态
-        projectList.innerHTML = `
-            <div class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                ${currentLang === 'zh' ? '正在加载项目...' : 'Loading projects...'}
-            </div>
-        `;
-
-        // 获取静态项目数据
-        const response = await fetch('./projects.json');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch('./api/v1/resume.json');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        resume = await response.json();
+        if (!localStorage.getItem('resume-language') && !new URLSearchParams(window.location.search).has('lang')) {
+            language = resume.settings.default_language;
         }
-        
-        const data = await response.json();
-        const projects = data.projects.filter(project => project.featured);
-        
-        if (projects.length === 0) {
-            projectList.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-info-circle"></i>
-                    ${currentLang === 'zh' ? '暂无精选项目' : 'No featured projects found'}
-                </div>
-            `;
-            return;
-        }
-
-        // 渲染项目列表
-        const projectsHTML = projects.map(project => createProjectHTML(project)).join('');
-        projectList.innerHTML = projectsHTML;
-        
+        render();
     } catch (error) {
-        console.error('Error loading projects:', error);
-        projectList.innerHTML = `
-            <div class="error-message">
-                <i class="fas fa-exclamation-triangle"></i>
-                ${currentLang === 'zh' ? '加载项目时出错，请稍后重试' : 'Error loading projects, please try again later'}
-            </div>
-        `;
+        console.error('Unable to load resume data:', error);
+        document.getElementById('resume-content').hidden = true;
+        document.getElementById('load-error').hidden = false;
     }
 }
 
-/**
- * 创建单个项目的HTML结构
- * @param {Object} project - 项目对象
- * @returns {string} HTML字符串
- */
-function createProjectHTML(project) {
-    const name = currentLang === 'zh' ? project.name_zh : project.name;
-    const description = currentLang === 'zh' ? project.description_zh : project.description;
-    const technologies = currentLang === 'zh' ? project.technologies_zh : project.technologies;
-    const technologiesText = technologies.join(' • ');
-    
-    return `
-        <div class="project-item">
-            <h3>${name}</h3>
-            <p>${description}</p>
-            <div class="project-meta">
-                <span class="technologies">${technologiesText}</span>
-                <span class="date">${currentLang === 'zh' ? '完成于' : 'Completed'} ${project.date}</span>
-            </div>
-            <div class="project-links">
-                <a href="${project.github_url}" target="_blank" class="project-link">
-                    <i class="fab fa-github"></i> ${currentLang === 'zh' ? '查看代码' : 'View Code'}
-                </a>
-                ${project.demo_url ? `
-                    <a href="${project.demo_url}" target="_blank" class="project-link">
-                        <i class="fas fa-external-link-alt"></i> ${currentLang === 'zh' ? '在线预览' : 'Live Demo'}
-                    </a>
-                ` : ''}
-            </div>
-        </div>
-    `;
-}
-
-/**
- * 初始化语言系统
- * 功能：设置默认语言，绑定语言切换事件
- */
-function initLanguageSystem() {
-    // 从localStorage读取语言偏好
-    const savedLang = localStorage.getItem('resume-language');
-    if (savedLang) {
-        currentLang = savedLang;
-    }
-    
-    // 更新页面语言
-    updateLanguage(currentLang);
-    updateLanguageButton(currentLang);
-    
-    // 绑定语言切换事件
-    const langToggle = document.getElementById('lang-toggle');
-    if (langToggle) {
-        langToggle.addEventListener('click', () => {
-            currentLang = currentLang === 'en' ? 'zh' : 'en';
-            updateLanguage(currentLang);
-            updateLanguageButton(currentLang);
-            localStorage.setItem('resume-language', currentLang);
-            
-            // 重新加载项目以更新语言
-            loadProjects();
-        });
-    }
-}
-
-/**
- * 更新页面语言
- * @param {string} language - 目标语言 ('en' 或 'zh')
- */
-function updateLanguage(language) {
-    // 更新所有带有data-en和data-zh属性的元素
-    const elements = document.querySelectorAll('[data-en][data-zh]');
-    elements.forEach(element => {
-        const text = element.getAttribute(`data-${language}`);
-        if (text) {
-            element.textContent = text;
-        }
-    });
-    
-    // 更新页面标题
-    const title = document.querySelector('title');
-    if (title) {
-        title.textContent = language === 'zh' ? 'Gellar - 个人简历' : 'Gellar - Resume';
-    }
-    
-    // 更新HTML lang属性
-    document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en-US';
-}
-
-/**
- * 更新语言切换按钮
- * @param {string} language - 当前语言
- */
-function updateLanguageButton(language) {
-    const langToggle = document.getElementById('lang-toggle');
-    const langText = langToggle.querySelector('.lang-text');
-    
-    if (langText) {
-        langText.textContent = language === 'zh' ? 'EN' : '中文';
-    }
-    
-    langToggle.title = language === 'zh' ? 'Switch to English' : '切换到中文';
-}
-
-/**
- * 初始化平滑滚动
- * 功能：为导航链接添加平滑滚动效果
- */
-function initSmoothScroll() {
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const targetId = link.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                const headerHeight = document.querySelector('header').offsetHeight;
-                const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-}
-
-/**
- * 初始化滚动效果
- * 功能：添加导航栏背景变化效果
- */
-function initScrollEffects() {
-    const header = document.querySelector('header');
-    
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-            header.style.backdropFilter = 'blur(10px)';
-        } else {
-            header.style.backgroundColor = 'var(--bg-primary)';
-            header.style.backdropFilter = 'none';
-        }
-    });
-}
-
-/**
- * 初始化页面
- * 功能：页面加载完成后执行所有初始化操作
- */
-document.addEventListener('DOMContentLoaded', () => {
-    // 初始化各个功能模块
-    initLanguageSystem();
-    initSmoothScroll();
-    initScrollEffects();
-    loadProjects();
-    
-    // 添加页面加载完成的视觉反馈
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.3s ease';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
+document.getElementById('language-toggle').addEventListener('click', () => {
+    language = language === 'en' ? 'zh' : 'en';
+    localStorage.setItem('resume-language', language);
+    if (resume) render();
+    else renderStaticText();
 });
 
-/**
- * 错误处理函数
- * 功能：统一的错误处理和用户提示
- */
-window.addEventListener('error', (e) => {
-    console.error('Global error:', e.error);
-    
-    // 如果是网络错误，显示友好的提示
-    if (e.error && e.error.message && e.error.message.includes('fetch')) {
-        const projectList = document.getElementById('project-list');
-        if (projectList && projectList.innerHTML.includes('loading')) {
-            projectList.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-wifi"></i>
-                    ${currentLang === 'zh' ? '网络连接问题，请检查网络后重试' : 'Network connection issue, please check your connection and try again'}
-                </div>
-            `;
-        }
-    }
-});
-
-/**
- * 性能优化：防抖函数
- * @param {Function} func - 要防抖的函数
- * @param {number} wait - 等待时间
- * @returns {Function} 防抖后的函数
- */
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// 应用防抖到滚动事件
-const debouncedScrollEffect = debounce(() => {
-    const header = document.querySelector('header');
-    if (window.scrollY > 50) {
-        header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-        header.style.backdropFilter = 'blur(10px)';
-    } else {
-        header.style.backgroundColor = 'var(--bg-primary)';
-        header.style.backdropFilter = 'none';
-    }
-}, 10);
-
-window.addEventListener('scroll', debouncedScrollEffect);
+initialize();

@@ -1,0 +1,57 @@
+name: Build resume and deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install JavaScript dependencies
+        run: npm ci
+      - name: Validate data and build static outputs
+        run: |
+          npm run validate
+          npm run build
+          npm test
+      - name: Install XeLaTeX and CJK fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y latexmk texlive-xetex texlive-latex-extra texlive-fonts-recommended texlive-lang-chinese fonts-noto-cjk
+      - name: Compile bilingual PDFs
+        run: |
+          npm run generate:tex
+          latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build build/resume-en.tex
+          latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build build/resume-zh.tex
+          npm run build
+          test "$(find dist/downloads -maxdepth 1 -name '*.pdf' -type f | wc -l)" -eq 2
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

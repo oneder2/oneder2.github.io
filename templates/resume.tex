@@ -1,0 +1,91 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=15mm,top=13mm,bottom=13mm]{geometry}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{needspace}
+\usepackage[hidelinks,unicode]{hyperref}
+\usepackage{microtype}
+
+\definecolor{Ink}{HTML}{172027}
+\definecolor{Muted}{HTML}{59666F}
+\definecolor{Accent}{HTML}{2457D6}
+\definecolor{Signal}{HTML}{D9573F}
+\definecolor{Rule}{HTML}{BFCBCD}
+
+\setmainfont{TeX Gyre Heros}
+\newfontfamily\HeadingFont{TeX Gyre Pagella}
+\setCJKmainfont{Noto Sans CJK SC}
+\setCJKfamilyfont{cjkheading}{Noto Serif CJK SC}
+\setCJKmonofont{Noto Sans Mono CJK SC}
+\newcommand{\CJKHeading}{\CJKfamily{cjkheading}}
+
+\hypersetup{
+  pdftitle={%%PROFILE_NAME%% - Resume},
+  pdfauthor={%%PROFILE_FULL_NAME%%},
+  colorlinks=true,
+  urlcolor=Accent
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlist[itemize]{leftmargin=4mm,topsep=2pt,itemsep=1pt,parsep=0pt}
+\color{Ink}
+
+\newcommand{\contactsep}{\hspace{0.45em}\textcolor{Rule}{/}\hspace{0.45em}}
+\newcommand{\resumesection}[1]{%
+  \needspace{4\baselineskip}%
+  \vspace{8pt}%
+  {\HeadingFont\CJKHeading\large\bfseries #1}\par
+  \vspace{2pt}\textcolor{Accent}{\rule{\linewidth}{1.1pt}}\vspace{4pt}%
+}
+\newenvironment{entry}[4]{%
+  \needspace{5\baselineskip}%
+  \begin{tabularx}{\linewidth}{@{}X>{\raggedleft\arraybackslash}p{39mm}@{}}
+    {\bfseries #1} & {\small\color{Muted} #2} \\
+    {\small\color{Muted} #3} & {\scriptsize\ttfamily\color{Signal} #4}
+  \end{tabularx}
+  \vspace{2pt}%
+}{\vspace{7pt}}
+\newcommand{\entrysummary}[1]{{\small #1\par\vspace{2pt}}}
+\newcommand{\entrylinks}[1]{{\small #1\par}}
+\newcommand{\skillrow}[2]{%
+  \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{34mm}X@{}}#1 & #2\end{tabularx}\vspace{3pt}%
+}
+
+\begin{document}
+
+\begin{minipage}[t]{0.66\linewidth}
+  {\HeadingFont\CJKHeading\fontsize{27}{29}\selectfont\bfseries %%PROFILE_NAME%%}\par
+  \vspace{3pt}
+  {\large\color{Accent}\bfseries %%PROFILE_HEADLINE%%}\par
+  \vspace{3pt}
+  {\small\color{Muted} %%PROFILE_LOCATION%%}
+\end{minipage}%
+\begin{minipage}[t]{0.34\linewidth}
+  \raggedleft\scriptsize\ttfamily
+  %%UPDATED_LABEL%% %%UPDATED_DATE%%
+\end{minipage}
+
+\vspace{8pt}
+{\small %%PROFILE_CONTACTS%%}\par
+
+\resumesection{%%SECTION_SUMMARY%%}
+{\small %%PROFILE_SUMMARY%%\par}
+
+%%EXPERIENCE_SECTION%%
+
+%%EDUCATION_SECTION%%
+
+\resumesection{%%SECTION_SKILLS%%}
+%%SKILLS%%
+
+\resumesection{%%SECTION_PROJECTS%%}
+%%PROJECTS%%
+
+\end{document}

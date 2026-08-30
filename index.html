@@ -1,131 +1,116 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <!-- 个人作品集网站主页 -->
-    <!-- 功能：展示个人项目、艺术作品和联系方式 -->
-    <!-- 技术栈：HTML5 + CSS3 + JavaScript -->
-    <!-- 作者：Oneder -->
-    <!-- 版本：v1.1 -->
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oneder | Personal Portfolio</title>
-    
-    <!-- Google Fonts - Inter字体 -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Gellar's bilingual software development and digital art resume.">
+    <meta name="color-scheme" content="light">
+    <title>Gellar | Resume</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- 主样式文件 -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/profile.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome图标库 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- 顶部导航栏 -->
-    <!-- 功能：提供页面导航，支持平滑滚动到对应区域 -->
-    <!-- 样式：固定定位，响应式设计，移动端适配 -->
-    <header>
-        <nav>
-            <div class="nav-content">
-                <div class="logo">Oneder</div>
-                <ul>
-                    <li><a href="#summary" data-en="Summary" data-zh="简介">Summary</a></li>
-                    <li><a href="#skills" data-en="Skills" data-zh="技能">Skills</a></li>
-                    <li><a href="#projects" data-en="Projects" data-zh="项目">Projects</a></li>
-                    <li class="language-switcher">
-                        <button id="lang-toggle" class="lang-btn" title="Switch Language">
-                            <span class="lang-text">中文</span>
-                            <i class="fas fa-globe"></i>
-                        </button>
-                    </li>
-                </ul>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+        <nav class="nav" aria-label="Primary navigation">
+            <a class="wordmark" href="#top" aria-label="Gellar home">
+                <span class="wordmark-mark" aria-hidden="true">G</span>
+                <span id="nav-name">Gellar</span>
+            </a>
+            <div class="nav-links">
+                <a href="#profile" data-ui="navProfile">Profile</a>
+                <a href="#experience" data-section-link="experience" data-ui="navExperience">Experience</a>
+                <a href="#projects" data-ui="navProjects">Projects</a>
             </div>
+            <button id="language-toggle" class="icon-button language-toggle" type="button" aria-label="Switch to Chinese">
+                <i class="fa-solid fa-language" aria-hidden="true"></i><span>中文</span>
+            </button>
         </nav>
     </header>
 
-    <main>
-        <div class="main-sections">
-            <!-- 个人信息区域 -->
-            <section id="header">
-                <div class="profile-section">
-                    <img src="assets/profile.jpg" alt="Profile Picture" class="profile-pic">
-                    <div class="profile-info">
-                        <h1 data-en="Gellar" data-zh="Gellar">Gellar</h1>
-                        <p class="title" data-en="Software Developer & Digital Artist" data-zh="软件开发工程师 & 数字艺术家">Software Developer & Digital Artist</p>
-                        <p class="location" data-en="Having college in the United States" data-zh="在美留学">Based in China</p>
-                    </div>
+    <main id="main-content">
+        <section id="top" class="hero" aria-labelledby="profile-name">
+            <div class="hero-copy">
+                <p class="record-label"><span data-ui="recordLabel">Professional record</span> <span id="record-version">v1.0.0</span></p>
+                <h1 id="profile-name">Gellar</h1>
+                <p id="profile-headline" class="hero-headline">Software Developer &amp; Digital Artist</p>
+                <p id="profile-location" class="hero-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Studying in the United States</p>
+                <div class="hero-actions">
+                    <a id="pdf-download" class="button button-primary" href="downloads/Gellar-Resume-EN.pdf" download>
+                        <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span data-ui="downloadPdf">Download PDF</span>
+                    </a>
+                    <a class="button button-secondary" href="api/v1/resume.json">
+                        <i class="fa-solid fa-code" aria-hidden="true"></i><span>JSON API</span>
+                    </a>
                 </div>
-                <div class="contact-info">
-                    <a href="mailto:gellar0703@gmail.com"><i class="fas fa-envelope"></i> gellar0703@gmail.com</a>
-                    <a href="https://github.com/oneder2" target="_blank"><i class="fab fa-github"></i> github.com/oneder2</a>
-                    <a href="https://www.linkedin.com/in/muyao-niu-387468351/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                </div>
-            </section>
+            </div>
+            <figure class="portrait-frame">
+                <img id="profile-avatar" src="assets/profile.jpg" alt="Portrait of Gellar" width="420" height="420">
+                <figcaption><span data-ui="updated">Updated</span> <time id="updated-at">2026-08-30</time></figcaption>
+            </figure>
+        </section>
 
-            <!-- 个人简介 -->
-            <section id="summary">
-                <h2 data-en="Summary" data-zh="个人简介">Summary</h2>
-                <p data-en="Passionate developer and digital artist with expertise in software development using Python, Java, and C++. Strong foundation in web development (HTML, CSS, JavaScript) and experience in digital art creation including digital painting and 3D modeling. Committed to bringing creativity and technical excellence to every project." data-zh="热衷于技术和艺术的开发者和数字艺术家，专精于使用Python、Java和C++进行软件开发。在Web开发（HTML、CSS、JavaScript）方面有扎实的基础，并在数字艺术创作方面有丰富经验，包括数字绘画和3D建模。致力于将创意和技术卓越融入到每一个项目中。">Passionate developer and digital artist with expertise in software development using Python, Java, and C++. Strong foundation in web development (HTML, CSS, JavaScript) and experience in digital art creation including digital painting and 3D modeling. Committed to bringing creativity and technical excellence to every project.</p>
-            </section>
+        <div id="resume-content" class="resume-layout" aria-live="polite" aria-busy="true">
+            <aside class="resume-rail" aria-label="Contact details and skills">
+                <section class="rail-section" aria-labelledby="contact-heading">
+                    <h2 id="contact-heading" data-ui="contact">Contact</h2>
+                    <ul id="contact-list" class="contact-list"></ul>
+                </section>
+                <section id="skills" class="rail-section" aria-labelledby="skills-heading">
+                    <h2 id="skills-heading" data-ui="skills">Skills</h2>
+                    <div id="skills-list" class="skills-list"></div>
+                </section>
+            </aside>
 
-            <!-- 技能 -->
-            <section id="skills">
-                <h2 data-en="Technical Skills" data-zh="技术技能">Technical Skills</h2>
-                <div class="skills-grid">
-                    <div class="skill-category">
-                        <h3 data-en="Programming Languages" data-zh="编程语言">Programming Languages</h3>
-                        <ul>
-                            <li>Python</li>
-                            <li>Java</li>
-                            <li>C#</li>
-                        </ul>
+            <div class="resume-main">
+                <section id="profile" class="content-section" aria-labelledby="profile-heading">
+                    <div class="section-heading">
+                        <p class="section-index">PROFILE</p>
+                        <h2 id="profile-heading" data-ui="profile">Profile</h2>
                     </div>
-                    <div class="skill-category">
-                        <h3 data-en="Web Technologies" data-zh="Web技术">Web Technologies</h3>
-                        <ul>
-                            <li>HTML5/CSS3/JS</li>
-                            <li>Git & GitHub</li>
-                            <li>Next.js</li>
-                            <li>N8N</li>
-                            <li>Supabase</li>
-                            <li>AWS Amplify</li>
-                        </ul>
+                    <p id="profile-summary" class="summary"></p>
+                </section>
+                <section id="experience" class="content-section" aria-labelledby="experience-heading" hidden>
+                    <div class="section-heading">
+                        <p class="section-index">EXPERIENCE</p>
+                        <h2 id="experience-heading" data-ui="experience">Experience</h2>
                     </div>
-                    <div class="skill-category">
-                        <h3 data-en="Digital Art" data-zh="数字艺术">Digital Art</h3>
-                        <ul>
-                            <li>Digital Painting</li>
-                            <li>Photoshop/Krita</li>
-                            <li>UI/UX Design</li>
-                            <li>Gaming Art</li>
-                        </ul>
+                    <div id="experience-list" class="timeline"></div>
+                </section>
+                <section id="education" class="content-section" aria-labelledby="education-heading" hidden>
+                    <div class="section-heading">
+                        <p class="section-index">EDUCATION</p>
+                        <h2 id="education-heading" data-ui="education">Education</h2>
                     </div>
-                </div>
-            </section>
+                    <div id="education-list" class="timeline"></div>
+                </section>
+                <section id="projects" class="content-section" aria-labelledby="projects-heading">
+                    <div class="section-heading">
+                        <p class="section-index">SELECTED WORK</p>
+                        <h2 id="projects-heading" data-ui="projects">Selected projects</h2>
+                    </div>
+                    <div id="project-list" class="project-list">
+                        <p class="loading" data-ui="loading">Loading resume...</p>
+                    </div>
+                </section>
+            </div>
+        </div>
 
-            <!-- 项目经验 -->
-            <section id="projects">
-                <h2 data-en="Featured Projects" data-zh="精选项目">Featured Projects</h2>
-                <div id="project-list" class="projects-list">
-                    <p class="loading" data-en="Loading projects..." data-zh="正在加载项目...">Loading projects...</p>
-                </div>
-            </section>
+        <div id="load-error" class="load-error" role="alert" hidden>
+            <strong data-ui="loadErrorTitle">Resume data could not be loaded.</strong>
+            <span data-ui="loadErrorBody">Run the site through a local web server and try again.</span>
         </div>
     </main>
 
-    <!-- 页脚 -->
-    <!-- 功能：显示版权信息 -->
-    <!-- 样式：深色背景，居中文字 -->
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 Oneder. All Rights Reserved.</p>
-        </div>
+    <footer class="site-footer">
+        <p><span id="footer-name">Gellar</span> <span aria-hidden="true">/</span> <span data-ui="footerLabel">Structured resume</span></p>
+        <a href="api/v1/schema.json"><span data-ui="schemaLabel">Schema</span> <span id="footer-version">v1.0.0</span></a>
     </footer>
-
-    <!-- 主JavaScript文件 -->
-    <!-- 功能：动态加载GitHub项目、艺术作品图片、lightbox功能等 -->
-    <script src="scripts.js"></script>
+    <noscript>This resume requires JavaScript to load its structured data.</noscript>
+    <script src="scripts.js" defer></script>
 </body>
 </html>
-
