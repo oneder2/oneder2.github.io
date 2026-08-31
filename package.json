@@ -3,15 +3,18 @@
   "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "A structured, bilingual resume published as a website, JSON API, and LaTeX PDF.",
+  "description": "A display and build client for the GWorkspace public resume API.",
   "scripts": {
     "validate": "node tools/resume-tools.mjs validate",
+    "sync": "node tools/resume-tools.mjs sync",
     "generate:tex": "node tools/resume-tools.mjs tex",
     "build": "node tools/resume-tools.mjs build",
+    "build:snapshot": "node tools/resume-tools.mjs build-snapshot",
+    "package": "node tools/resume-tools.mjs package",
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "ajv": "^8.17.1",
-    "yaml": "^2.8.1"
+    "ajv-formats": "^3.0.1"
   }
 }

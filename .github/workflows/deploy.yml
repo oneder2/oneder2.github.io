@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GWORKSPACE_RESUME_API_URL: https://workspace.gellaronline.cc/api/public/v1/resume
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -30,21 +32,19 @@ jobs:
           cache: npm
       - name: Install JavaScript dependencies
         run: npm ci
-      - name: Validate data and build static outputs
-        run: |
-          npm run validate
-          npm run build
-          npm test
+      - name: Fetch, validate, and build from GWorkspace
+        run: npm run build
+      - name: Test API client and generated outputs
+        run: npm test
       - name: Install XeLaTeX and CJK fonts
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y latexmk texlive-xetex texlive-latex-extra texlive-fonts-recommended texlive-lang-chinese fonts-noto-cjk fonts-texgyre
-      - name: Compile bilingual PDFs
+      - name: Compile bilingual PDFs from the fetched snapshot
         run: |
-          npm run generate:tex
           latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build build/resume-en.tex
           latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build build/resume-zh.tex
-          npm run build
+          npm run package
           test "$(find dist/downloads -maxdepth 1 -name '*.pdf' -type f | wc -l)" -eq 2
       - name: Configure Pages
         uses: actions/configure-pages@v6

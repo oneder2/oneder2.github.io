@@ -1,155 +1,203 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://resume.gellaronline.cc/schema/resume.schema.json",
-  "title": "Gellar structured resume",
+  "$id": "https://workspace.gellaronline.cc/contracts/resume/v1/schema.json",
+  "title": "GWorkspace public resume v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "updated_at", "profile", "skills", "experience", "education", "projects", "settings"],
-  "$defs": {
-    "localizedText": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["en", "zh"],
-      "properties": {
-        "en": { "type": "string", "minLength": 1 },
-        "zh": { "type": "string", "minLength": 1 }
-      }
-    },
-    "localizedLines": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["en", "zh"],
-      "properties": {
-        "en": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-        "zh": { "type": "array", "items": { "type": "string", "minLength": 1 } }
-      }
-    },
-    "date": {
-      "type": "string",
-      "pattern": "^[0-9]{4}(-[0-9]{2})?$"
-    },
-    "links": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "source": { "type": "string", "pattern": "^https://" },
-        "demo": { "type": "string", "pattern": "^https://" },
-        "case_study": { "type": "string", "pattern": "^https://" }
-      }
-    },
-    "timelineEntry": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["id", "organization", "title", "start", "end", "highlights", "visibility"],
-      "properties": {
-        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
-        "organization": { "$ref": "#/$defs/localizedText" },
-        "title": { "$ref": "#/$defs/localizedText" },
-        "location": { "$ref": "#/$defs/localizedText" },
-        "start": { "$ref": "#/$defs/date" },
-        "end": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
-        "summary": { "$ref": "#/$defs/localizedText" },
-        "highlights": { "$ref": "#/$defs/localizedLines" },
-        "visibility": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "enum": ["web", "pdf", "api"] }
-        }
-      }
-    }
-  },
+  "required": ["schema_version", "generated_at", "source", "locale", "surface", "profile", "skills", "experience", "education", "projects", "settings"],
   "properties": {
     "schema_version": { "const": "1.0.0" },
-    "updated_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
-    "profile": {
+    "generated_at": { "$ref": "#/$defs/timestamp" },
+    "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "full_name", "headline", "location", "summary", "avatar", "contacts"],
+      "required": ["system", "canonical_url", "updated_at"],
       "properties": {
-        "name": { "$ref": "#/$defs/localizedText" },
-        "full_name": { "$ref": "#/$defs/localizedText" },
-        "headline": { "$ref": "#/$defs/localizedText" },
-        "location": { "$ref": "#/$defs/localizedText" },
-        "summary": { "$ref": "#/$defs/localizedText" },
-        "avatar": { "type": "string", "pattern": "^assets/" },
-        "contacts": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["type", "label", "value", "url"],
-            "properties": {
-              "type": { "enum": ["email", "phone", "website", "github", "linkedin", "location", "other"] },
-              "label": { "type": "string", "minLength": 1 },
-              "value": { "type": "string", "minLength": 1 },
-              "url": { "type": "string", "pattern": "^(https://|mailto:|tel:)" }
-            }
-          }
-        }
+        "system": { "const": "GWorkspace" },
+        "canonical_url": { "$ref": "#/$defs/uri" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
       }
     },
-    "skills": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "name", "items"],
-        "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
-          "name": { "$ref": "#/$defs/localizedText" },
-          "items": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
-        }
-      }
-    },
-    "experience": { "type": "array", "items": { "$ref": "#/$defs/timelineEntry" } },
-    "education": { "type": "array", "items": { "$ref": "#/$defs/timelineEntry" } },
-    "projects": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "name", "summary", "start", "end", "technologies", "highlights", "links", "featured", "visibility"],
-        "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
-          "name": { "$ref": "#/$defs/localizedText" },
-          "summary": { "$ref": "#/$defs/localizedText" },
-          "role": { "$ref": "#/$defs/localizedText" },
-          "start": { "$ref": "#/$defs/date" },
-          "end": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
-          "involvement": { "enum": ["creator", "contributor", "collaborator"] },
-          "technologies": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
-          "highlights": {
-            "anyOf": [
-              { "type": "array", "maxItems": 0 },
-              { "$ref": "#/$defs/localizedLines" }
-            ]
-          },
-          "links": { "$ref": "#/$defs/links" },
-          "featured": { "type": "boolean" },
-          "visibility": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": { "enum": ["web", "pdf", "api"] }
-          }
-        }
-      }
-    },
+    "locale": { "type": ["string", "null"], "enum": ["zh", "en", null] },
+    "surface": { "$ref": "#/$defs/surface" },
+    "profile": { "$ref": "#/$defs/profile" },
+    "skills": { "type": "array", "items": { "$ref": "#/$defs/skill" } },
+    "experience": { "type": "array", "items": { "$ref": "#/$defs/timeline" } },
+    "education": { "type": "array", "items": { "$ref": "#/$defs/timeline" } },
+    "projects": { "type": "array", "items": { "$ref": "#/$defs/project" } },
     "settings": {
       "type": "object",
       "additionalProperties": false,
       "required": ["default_language", "pdf"],
       "properties": {
-        "default_language": { "enum": ["en", "zh"] },
+        "default_language": { "enum": ["zh", "en"] },
         "pdf": {
           "type": "object",
           "additionalProperties": false,
           "required": ["project_limit", "filename"],
           "properties": {
             "project_limit": { "type": "integer", "minimum": 1 },
-            "filename": { "$ref": "#/$defs/localizedText" }
+            "filename": { "$ref": "#/$defs/localizedValue" }
           }
         }
+      }
+    }
+  },
+  "$defs": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "uri": { "type": "string", "format": "uri", "maxLength": 2048 },
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$", "maxLength": 128 },
+    "surface": { "enum": ["portfolio", "resume_web", "resume_pdf", "gellaria"] },
+    "surfaces": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/surface" } },
+    "localizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zh", "en"],
+      "properties": {
+        "zh": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    },
+    "localizedValue": {
+      "oneOf": [
+        { "$ref": "#/$defs/localizedText" },
+        { "type": "string", "minLength": 1 }
+      ]
+    },
+    "localizedLines": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["zh", "en"],
+          "properties": {
+            "zh": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "en": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      ]
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "url", "mime_type", "alt", "width", "height"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "url": { "$ref": "#/$defs/uri" },
+        "mime_type": { "type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$" },
+        "alt": { "oneOf": [{ "$ref": "#/$defs/localizedValue" }, { "type": "null" }] },
+        "width": { "type": ["integer", "null"], "minimum": 1 },
+        "height": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "recordFields": {
+      "type": "object",
+      "required": ["id", "status", "surfaces", "updated_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "status": { "const": "published" },
+        "surfaces": { "$ref": "#/$defs/surfaces" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "label", "value", "url", "status", "surfaces", "updated_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "enum": ["email", "phone", "website", "github", "linkedin", "location", "other"] },
+        "label": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 },
+        "url": { "$ref": "#/$defs/uri" },
+        "status": { "const": "published" },
+        "surfaces": { "$ref": "#/$defs/surfaces" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "full_name", "headline", "location", "summary", "avatar", "contacts", "status", "surfaces", "updated_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/localizedValue" },
+        "full_name": { "$ref": "#/$defs/localizedValue" },
+        "headline": { "$ref": "#/$defs/localizedValue" },
+        "location": { "$ref": "#/$defs/localizedValue" },
+        "summary": { "$ref": "#/$defs/localizedValue" },
+        "avatar": { "oneOf": [{ "$ref": "#/$defs/media" }, { "type": "null" }] },
+        "contacts": { "type": "array", "items": { "$ref": "#/$defs/contact" } },
+        "status": { "const": "published" },
+        "surfaces": { "$ref": "#/$defs/surfaces" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "items", "status", "surfaces", "updated_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/localizedValue" },
+        "items": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "status": { "const": "published" },
+        "surfaces": { "$ref": "#/$defs/surfaces" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "organization", "title", "location", "summary", "highlights", "start", "end", "canonical_url", "status", "surfaces", "updated_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["employment", "education", "volunteering", "award", "other"] },
+        "organization": { "$ref": "#/$defs/localizedValue" },
+        "title": { "$ref": "#/$defs/localizedValue" },
+        "location": { "oneOf": [{ "$ref": "#/$defs/localizedValue" }, { "type": "null" }] },
+        "summary": { "$ref": "#/$defs/localizedValue" },
+        "highlights": { "$ref": "#/$defs/localizedLines" },
+        "start": { "type": "string", "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+        "end": { "type": ["string", "null"], "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+        "canonical_url": { "oneOf": [{ "$ref": "#/$defs/uri" }, { "type": "null" }] },
+        "status": { "const": "published" },
+        "surfaces": { "$ref": "#/$defs/surfaces" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "#/$defs/uri" },
+        "demo": { "$ref": "#/$defs/uri" },
+        "case_study": { "$ref": "#/$defs/uri" }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "slug", "name", "summary", "role", "involvement", "start", "end", "technologies", "highlights", "links", "cover", "gallery", "featured", "status", "surfaces", "updated_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "name": { "$ref": "#/$defs/localizedValue" },
+        "summary": { "$ref": "#/$defs/localizedValue" },
+        "role": { "oneOf": [{ "$ref": "#/$defs/localizedValue" }, { "type": "null" }] },
+        "involvement": { "enum": ["creator", "contributor", "collaborator"] },
+        "start": { "type": "string", "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+        "end": { "type": ["string", "null"], "pattern": "^[0-9]{4}(-[0-9]{2})?$" },
+        "technologies": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "highlights": { "$ref": "#/$defs/localizedLines" },
+        "links": { "$ref": "#/$defs/links" },
+        "cover": { "oneOf": [{ "$ref": "#/$defs/media" }, { "type": "null" }] },
+        "gallery": { "type": "array", "items": { "$ref": "#/$defs/media" } },
+        "featured": { "type": "boolean" },
+        "status": { "const": "published" },
+        "surfaces": { "$ref": "#/$defs/surfaces" },
+        "updated_at": { "$ref": "#/$defs/timestamp" }
       }
     }
   }

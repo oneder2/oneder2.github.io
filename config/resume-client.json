@@ -1,0 +1,6 @@
+{
+  "api_url": "https://workspace.gellaronline.cc/api/public/v1/resume",
+  "schema_version": "1.0.0",
+  "cache_key": "gworkspace-resume:v1:resume_web",
+  "request_timeout_ms": 12000
+}

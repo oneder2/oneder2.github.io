@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Gellar's bilingual software development and digital art resume.">
+    <meta name="description" content="Bilingual structured resume.">
     <meta name="color-scheme" content="light">
-    <title>Gellar | Resume</title>
+    <title>Resume</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
-    <link rel="icon" href="assets/profile.jpg">
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,9 +17,9 @@
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
         <nav class="nav" aria-label="Primary navigation">
-            <a class="wordmark" href="#top" aria-label="Gellar home">
-                <span class="wordmark-mark" aria-hidden="true">G</span>
-                <span id="nav-name">Gellar</span>
+            <a class="wordmark" href="#top" aria-label="Resume">
+                <span class="wordmark-mark" aria-hidden="true">R</span>
+                <span id="nav-name">Resume</span>
             </a>
             <div class="nav-links">
                 <a href="#profile" data-ui="navProfile">Profile</a>
@@ -33,84 +33,120 @@
     </header>
 
     <main id="main-content">
-        <section id="top" class="hero" aria-labelledby="profile-name">
-            <div class="hero-copy">
-                <p class="record-label"><span data-ui="recordLabel">Professional record</span> <span id="record-version">v1.0.0</span></p>
-                <h1 id="profile-name">Gellar</h1>
-                <p id="profile-headline" class="hero-headline">Software Developer &amp; Digital Artist</p>
-                <p id="profile-location" class="hero-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Studying in the United States</p>
-                <div class="hero-actions">
-                    <a id="pdf-download" class="button button-primary" href="downloads/Gellar-Resume-EN.pdf" download>
-                        <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span data-ui="downloadPdf">Download PDF</span>
-                    </a>
-                    <a class="button button-secondary" href="api/v1/resume.json">
-                        <i class="fa-solid fa-code" aria-hidden="true"></i><span>JSON API</span>
-                    </a>
+        <div id="loading-state" class="loading-state" role="status">
+            <span class="loading-rule" aria-hidden="true"></span>
+            <p data-ui="loading">Loading resume...</p>
+        </div>
+
+        <div id="resume-shell" hidden>
+            <section id="top" class="hero" aria-labelledby="profile-name">
+                <div class="hero-copy">
+                    <div class="record-line">
+                        <p class="record-label"><span data-ui="recordLabel">Professional record</span> <span id="record-version"></span></p>
+                        <p id="source-status" class="source-status" aria-live="polite"></p>
+                    </div>
+                    <h1 id="profile-name"></h1>
+                    <p id="profile-headline" class="hero-headline"></p>
+                    <p id="profile-location" class="hero-location"></p>
+                    <div class="hero-actions">
+                        <a id="pdf-download" class="button button-primary" download>
+                            <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span data-ui="downloadPdf">Download PDF</span>
+                        </a>
+                        <a class="button button-secondary" href="api/v1/resume.json">
+                            <i class="fa-solid fa-code" aria-hidden="true"></i><span>JSON API</span>
+                        </a>
+                    </div>
+                </div>
+                <figure id="profile-portrait" class="portrait-frame" hidden>
+                    <img id="profile-avatar" alt="">
+                    <figcaption><span data-ui="updated">Updated</span> <time id="updated-at"></time></figcaption>
+                </figure>
+            </section>
+
+            <div id="resume-content" class="resume-layout" aria-live="polite" aria-busy="true">
+                <aside class="resume-rail" aria-label="Contact details and skills">
+                    <section class="rail-section" aria-labelledby="contact-heading">
+                        <h2 id="contact-heading" data-ui="contact">Contact</h2>
+                        <ul id="contact-list" class="contact-list"></ul>
+                    </section>
+                    <section id="skills" class="rail-section" aria-labelledby="skills-heading">
+                        <h2 id="skills-heading" data-ui="skills">Skills</h2>
+                        <div id="skills-list" class="skills-list"></div>
+                    </section>
+                </aside>
+
+                <div class="resume-main">
+                    <section id="profile" class="content-section" aria-labelledby="profile-heading">
+                        <div class="section-heading">
+                            <p class="section-index">PROFILE</p>
+                            <h2 id="profile-heading" data-ui="profile">Profile</h2>
+                        </div>
+                        <p id="profile-summary" class="summary"></p>
+                    </section>
+                    <section id="experience" class="content-section" aria-labelledby="experience-heading" hidden>
+                        <div class="section-heading">
+                            <p class="section-index">EXPERIENCE</p>
+                            <h2 id="experience-heading" data-ui="experience">Experience</h2>
+                        </div>
+                        <div id="experience-list" class="timeline"></div>
+                    </section>
+                    <section id="education" class="content-section" aria-labelledby="education-heading" hidden>
+                        <div class="section-heading">
+                            <p class="section-index">EDUCATION</p>
+                            <h2 id="education-heading" data-ui="education">Education</h2>
+                        </div>
+                        <div id="education-list" class="timeline"></div>
+                    </section>
+                    <section id="projects" class="content-section" aria-labelledby="projects-heading">
+                        <div class="section-heading">
+                            <p class="section-index">SELECTED WORK</p>
+                            <h2 id="projects-heading" data-ui="projects">Selected projects</h2>
+                        </div>
+                        <div id="project-list" class="project-list"></div>
+                    </section>
                 </div>
             </div>
-            <figure class="portrait-frame">
-                <img id="profile-avatar" src="assets/profile.jpg" alt="Portrait of Gellar" width="420" height="420">
-                <figcaption><span data-ui="updated">Updated</span> <time id="updated-at">2026-08-30</time></figcaption>
-            </figure>
-        </section>
+        </div>
 
-        <div id="resume-content" class="resume-layout" aria-live="polite" aria-busy="true">
-            <aside class="resume-rail" aria-label="Contact details and skills">
-                <section class="rail-section" aria-labelledby="contact-heading">
-                    <h2 id="contact-heading" data-ui="contact">Contact</h2>
-                    <ul id="contact-list" class="contact-list"></ul>
-                </section>
-                <section id="skills" class="rail-section" aria-labelledby="skills-heading">
-                    <h2 id="skills-heading" data-ui="skills">Skills</h2>
-                    <div id="skills-list" class="skills-list"></div>
-                </section>
-            </aside>
-
-            <div class="resume-main">
-                <section id="profile" class="content-section" aria-labelledby="profile-heading">
-                    <div class="section-heading">
-                        <p class="section-index">PROFILE</p>
-                        <h2 id="profile-heading" data-ui="profile">Profile</h2>
-                    </div>
-                    <p id="profile-summary" class="summary"></p>
-                </section>
-                <section id="experience" class="content-section" aria-labelledby="experience-heading" hidden>
-                    <div class="section-heading">
-                        <p class="section-index">EXPERIENCE</p>
-                        <h2 id="experience-heading" data-ui="experience">Experience</h2>
-                    </div>
-                    <div id="experience-list" class="timeline"></div>
-                </section>
-                <section id="education" class="content-section" aria-labelledby="education-heading" hidden>
-                    <div class="section-heading">
-                        <p class="section-index">EDUCATION</p>
-                        <h2 id="education-heading" data-ui="education">Education</h2>
-                    </div>
-                    <div id="education-list" class="timeline"></div>
-                </section>
-                <section id="projects" class="content-section" aria-labelledby="projects-heading">
-                    <div class="section-heading">
-                        <p class="section-index">SELECTED WORK</p>
-                        <h2 id="projects-heading" data-ui="projects">Selected projects</h2>
-                    </div>
-                    <div id="project-list" class="project-list">
-                        <p class="loading" data-ui="loading">Loading resume...</p>
-                    </div>
-                </section>
+        <section id="unavailable" class="unavailable" role="alert" hidden>
+            <span class="unavailable-code" aria-hidden="true">503</span>
+            <div>
+                <h1 data-ui="unavailableTitle">Resume temporarily unavailable</h1>
+                <p data-ui="unavailableBody">The source service could not be reached. Try again in a moment.</p>
+                <button id="retry" class="button button-primary" type="button">
+                    <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                    <span data-ui="retry">Try again</span>
+                </button>
             </div>
-        </div>
-
-        <div id="load-error" class="load-error" role="alert" hidden>
-            <strong data-ui="loadErrorTitle">Resume data could not be loaded.</strong>
-            <span data-ui="loadErrorBody">Run the site through a local web server and try again.</span>
-        </div>
+        </section>
     </main>
 
     <footer class="site-footer">
-        <p><span id="footer-name">Gellar</span> <span aria-hidden="true">/</span> <span data-ui="footerLabel">Structured resume</span></p>
-        <a href="api/v1/schema.json"><span data-ui="schemaLabel">Schema</span> <span id="footer-version">v1.0.0</span></a>
+        <p><span id="footer-name">Resume</span> <span aria-hidden="true">/</span> <span data-ui="footerLabel">Structured resume</span></p>
+        <a href="api/v1/schema.json"><span data-ui="schemaLabel">Schema</span> <span id="footer-version"></span></a>
     </footer>
-    <noscript>This resume requires JavaScript to load its structured data.</noscript>
-    <script src="scripts.js" defer></script>
+
+    <dialog id="project-lightbox" class="lightbox" aria-labelledby="lightbox-caption">
+        <div class="lightbox-toolbar">
+            <span id="lightbox-position" class="lightbox-position"></span>
+            <button id="lightbox-close" class="lightbox-control" type="button" title="Close" data-ui-title="galleryClose" aria-label="Close image viewer">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        <figure>
+            <img id="lightbox-image" alt="">
+            <figcaption id="lightbox-caption"></figcaption>
+        </figure>
+        <button id="lightbox-previous" class="lightbox-control lightbox-previous" type="button" title="Previous" aria-label="Previous image">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <button id="lightbox-next" class="lightbox-control lightbox-next" type="button" title="Next" aria-label="Next image">
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+    </dialog>
+
+    <noscript>This resume requires JavaScript to load data from GWorkspace.</noscript>
+    <script src="resume-config.js"></script>
+    <script type="module" src="scripts.js"></script>
 </body>
 </html>
