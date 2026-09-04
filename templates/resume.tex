@@ -1,6 +1,6 @@
 \documentclass[10pt,a4paper]{article}
 
-\usepackage[margin=15mm,top=13mm,bottom=13mm]{geometry}
+\usepackage[margin=13mm,top=10mm,bottom=10mm]{geometry}
 \usepackage{xcolor}
 \usepackage{fontspec}
 \usepackage{xeCJK}
@@ -34,15 +34,15 @@
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
-\setlist[itemize]{leftmargin=4mm,topsep=2pt,itemsep=1pt,parsep=0pt}
+\setlist[itemize]{leftmargin=4mm,topsep=1pt,itemsep=0pt,parsep=0pt}
 \color{Ink}
 
 \newcommand{\contactsep}{\hspace{0.45em}\textcolor{Rule}{/}\hspace{0.45em}}
 \newcommand{\resumesection}[1]{%
   \needspace{4\baselineskip}%
-  \vspace{8pt}%
+  \vspace{5pt}%
   {\HeadingFont\CJKHeading\large\bfseries #1}\par
-  \vspace{2pt}\textcolor{Accent}{\rule{\linewidth}{1.1pt}}\vspace{4pt}%
+  \vspace{1pt}\textcolor{Accent}{\rule{\linewidth}{1.1pt}}\vspace{2pt}%
 }
 \newenvironment{entry}[4]{%
   \needspace{5\baselineskip}%
@@ -51,20 +51,20 @@
     {\small\color{Muted} #3} & {\scriptsize\ttfamily\color{Signal} #4}
   \end{tabularx}
   \vspace{2pt}%
-}{\vspace{7pt}}
-\newcommand{\entrysummary}[1]{{\small #1\par\vspace{2pt}}}
+}{\vspace{4pt}}
+\newcommand{\entrysummary}[1]{{\small #1\par\vspace{1pt}}}
 \newcommand{\entrylinks}[1]{{\small #1\par}}
 \newcommand{\skillrow}[2]{%
-  \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{34mm}X@{}}#1 & #2\end{tabularx}\vspace{3pt}%
+  \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{34mm}X@{}}#1 & #2\end{tabularx}\vspace{1pt}%
 }
 
 \begin{document}
 
 \begin{minipage}[t]{0.66\linewidth}
   {\HeadingFont\CJKHeading\fontsize{27}{29}\selectfont\bfseries %%PROFILE_NAME%%}\par
-  \vspace{3pt}
+  \vspace{2pt}
   {\large\color{Accent}\bfseries %%PROFILE_HEADLINE%%}\par
-  \vspace{3pt}
+  \vspace{2pt}
   {\small\color{Muted} %%PROFILE_LOCATION%%}
 \end{minipage}%
 \begin{minipage}[t]{0.34\linewidth}
@@ -72,7 +72,7 @@
   %%UPDATED_LABEL%% %%UPDATED_DATE%%
 \end{minipage}
 
-\vspace{8pt}
+\vspace{5pt}
 {\small %%PROFILE_CONTACTS%%}\par
 
 \resumesection{%%SECTION_SUMMARY%%}
