@@ -30,7 +30,10 @@ function project(id, surfaces, origin, options = {}) {
         start: '2025-01',
         end: null,
         technologies: ['Node.js', 'CSS'],
-        highlights: localized([`${slug} English highlight.`], [`${slug} 中文亮点。`]),
+        highlights: localized(
+            [`${slug} English highlight.`, `${slug} secondary English highlight.`],
+            [`${slug} 中文亮点。`, `${slug} 次要中文亮点。`],
+        ),
         links: { source: `${origin}/source/${slug}` },
         cover,
         gallery: [

@@ -141,9 +141,54 @@ test('localized JSON and legacy project output are derived from the web response
 test('LaTeX uses only the PDF surface and resolves every template token', async () => {
     const source = await fs.readFile(path.join(outputRoot, 'build/resume-en.tex'), 'utf8');
     assert.match(source, /PDF only/);
+    assert.match(source, /pdf-only English summary\./);
+    assert.match(source, /pdf-only English highlight\./);
+    assert.doesNotMatch(source, /pdf-only secondary English highlight\./);
     assert.match(source, /Shared project/);
     assert.doesNotMatch(source, /Web only/);
     assert.doesNotMatch(source, /%%[A-Z_]+%%/);
+});
+
+test('package fails when compiled PDFs are missing', async () => {
+    const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'resume-package-test-'));
+    try {
+        await fs.mkdir(path.join(temporaryRoot, 'build'), { recursive: true });
+        await fs.cp(path.join(outputRoot, 'build', 'snapshots'), path.join(temporaryRoot, 'build', 'snapshots'), { recursive: true });
+        const result = await runTool('package', { RESUME_OUTPUT_ROOT: temporaryRoot });
+        assert.notEqual(result.code, 0);
+        assert.match(result.stderr, /resume-en\.pdf/);
+    } finally {
+        await fs.rm(temporaryRoot, { recursive: true, force: true });
+    }
+});
+
+test('web and PDF surfaces must publish the same download filenames', async () => {
+    const started = await startServer((request, response) => {
+        const url = new URL(request.url, 'http://localhost');
+        const payload = createResume(url.searchParams.get('surface'), started.origin);
+        if (payload.surface === 'resume_pdf') payload.settings.pdf.filename.en = 'Different-Resume.pdf';
+        response.writeHead(200, { 'Content-Type': 'application/json' });
+        response.end(JSON.stringify(payload));
+    });
+    const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'resume-filename-test-'));
+    try {
+        const result = await runTool('build', {
+            GWORKSPACE_RESUME_API_URL: `${started.origin}/api/public/v1/resume`,
+            RESUME_OUTPUT_ROOT: temporaryRoot,
+        });
+        assert.notEqual(result.code, 0);
+        assert.match(result.stderr, /PDF filename for en differs/);
+    } finally {
+        await new Promise((resolve) => started.instance.close(resolve));
+        await fs.rm(temporaryRoot, { recursive: true, force: true });
+    }
+});
+
+test('deployment supports scheduled freshness checks and content dispatches', async () => {
+    const workflow = await fs.readFile(path.join(root, '.github/workflows/deploy.yml'), 'utf8');
+    assert.match(workflow, /repository_dispatch:\s+types: \[resume_content_updated\]/);
+    assert.match(workflow, /schedule:\s+- cron:/);
+    assert.match(workflow, /del\(\.generated_at\)/);
 });
 
 test('site is a runtime API client and does not use static JSON as browser fallback', async () => {

@@ -28,6 +28,8 @@ npx serve dist
 - `npm run package`：使用已有快照重建站点，并复制已经编译的 PDF。
 - `npm test`：使用临时 mock API 测试解析、构建、缓存和故障行为。
 
+PDF 使用 `resume_pdf` surface 和 `settings.pdf.project_limit` 生成一页精选简历。每个项目包含完整摘要和第一条核心亮点，工作经历保留全部亮点；网页则展示 `resume_web` surface 的全部可见内容。
+
 测试或预览其它环境时，可设置 `GWORKSPACE_RESUME_API_URL`。设置 `RESUME_OUTPUT_ROOT` 可以将 `build/` 和 `dist/` 隔离到临时目录。
 
 ## 浏览器故障行为
@@ -52,4 +54,6 @@ npx serve dist
 
 ## 部署
 
-推送到 `main` 后，GitHub Actions 会拉取并校验 API 一次，运行测试，使用 XeLaTeX 编译两份 PDF，再从同一批快照打包并发布 GitHub Pages。正式接口必须已经部署并允许 `https://resume.gellaronline.cc` 跨域访问，否则构建或网页运行时会按上述规则失败。
+推送到 `main`、手动运行工作流或收到 `resume_content_updated` repository dispatch 后，GitHub Actions 会拉取并校验 API，运行测试，使用 XeLaTeX 编译两份 PDF，再从同一批快照打包并发布 GitHub Pages。
+
+工作流还会每小时比较 GWorkspace 与线上 `resume_web`、`resume_pdf` 静态 JSON 的内容哈希。内容没有变化时立即结束；发现差异时自动重建，避免网页已经显示新数据而 JSON/PDF 仍停留在旧快照。正式接口必须已经部署并允许 `https://resume.gellaronline.cc` 跨域访问，否则构建或网页运行时会按上述规则失败。

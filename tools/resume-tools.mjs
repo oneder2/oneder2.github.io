@@ -123,13 +123,24 @@ function createSnapshot(payload, requestUrl) {
   };
 }
 
+function validateSnapshotSet(snapshots) {
+  const webFilenames = snapshots[WEB_SURFACE].payload.settings.pdf.filename;
+  const pdfFilenames = snapshots[PDF_SURFACE].payload.settings.pdf.filename;
+  for (const language of ['en', 'zh']) {
+    if (localized(webFilenames, language) !== localized(pdfFilenames, language)) {
+      throw new Error(`PDF filename for ${language} differs between resume_web and resume_pdf`);
+    }
+  }
+  return snapshots;
+}
+
 async function syncSnapshots(context) {
   const fetched = await Promise.all(
     surfaces.map((surface) => fetchSurface(context.config, context.validateSchema, surface)),
   );
-  const snapshots = Object.fromEntries(
+  const snapshots = validateSnapshotSet(Object.fromEntries(
     fetched.map(({ payload, requestUrl }) => [payload.surface, createSnapshot(payload, requestUrl)]),
-  );
+  ));
   await Promise.all(surfaces.map((surface) => writeJson(
     path.join(snapshotDir, `${surface}.json`), snapshots[surface],
   )));
@@ -149,7 +160,7 @@ async function loadSnapshots(context) {
     }
     return [surface, snapshot];
   }));
-  return Object.fromEntries(entries);
+  return validateSnapshotSet(Object.fromEntries(entries));
 }
 
 function localize(value, language) {
@@ -214,8 +225,8 @@ function formatRange(entry, language) {
   return `${formatDate(entry.start, language)} -- ${formatDate(entry.end, language)}`;
 }
 
-function renderHighlights(highlights, language) {
-  const lines = localizedLines(highlights, language);
+function renderHighlights(highlights, language, limit = Number.POSITIVE_INFINITY) {
+  const lines = localizedLines(highlights, language).slice(0, limit);
   if (lines.length === 0) return '';
   return ['\\begin{itemize}', ...lines.map((line) => `  \\item ${escapeLatex(line)}`), '\\end{itemize}'].join('\n');
 }
@@ -255,7 +266,8 @@ function renderProjects(resume, language) {
         `  {${escapeLatex(formatRange(project, language))}}`,
         `  {${escapeLatex(meta)}}`,
         '  {}',
-        renderHighlights(project.highlights, language),
+        `\\entrysummary{${escapeLatex(localized(project.summary, language))}}`,
+        renderHighlights(project.highlights, language, 1),
         links ? `\\entrylinks{${links}}` : '',
         '\\end{entry}',
       ].filter(Boolean).join('\n');
@@ -318,11 +330,7 @@ async function copyPdfFiles(pdfResume) {
   for (const language of ['en', 'zh']) {
     const source = path.join(buildDir, `resume-${language}.pdf`);
     const filename = localized(pdfResume.settings.pdf.filename, language);
-    try {
-      await fs.copyFile(source, path.join(distDir, 'downloads', filename));
-    } catch (error) {
-      if (error.code !== 'ENOENT') throw error;
-    }
+    await fs.copyFile(source, path.join(distDir, 'downloads', filename));
   }
 }
 

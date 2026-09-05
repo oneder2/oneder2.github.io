@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [resume_content_updated]
+  schedule:
+    - cron: '23 * * * *'
 
 permissions:
   contents: read
@@ -15,7 +19,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.compare.outputs.should_build }}
+    steps:
+      - name: Decide whether the published artifacts are current
+        id: compare
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          API_URL: https://workspace.gellaronline.cc/api/public/v1/resume
+          PUBLISHED_URL: https://resume.gellaronline.cc/api/v1
+        run: |
+          if [ "$EVENT_NAME" != "schedule" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          payload_hash() {
+            curl --fail --silent --show-error --location --retry 3 "$1" \
+              | jq --compact-output --sort-keys 'del(.generated_at)' \
+              | sha256sum \
+              | cut -d ' ' -f 1
+          }
+
+          live_web="$(payload_hash "$API_URL?surface=resume_web")"
+          live_pdf="$(payload_hash "$API_URL?surface=resume_pdf")"
+          published_web="$(payload_hash "$PUBLISHED_URL/resume.json" 2>/dev/null || true)"
+          published_pdf="$(payload_hash "$PUBLISHED_URL/resume.pdf.json" 2>/dev/null || true)"
+
+          if [ "$live_web" = "$published_web" ] && [ "$live_pdf" = "$published_pdf" ]; then
+            echo "Published resume artifacts already match GWorkspace."
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "GWorkspace content differs from the published artifacts."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: freshness
+    if: needs.freshness.outputs.should_build == 'true'
     runs-on: ubuntu-latest
     env:
       GWORKSPACE_RESUME_API_URL: https://workspace.gellaronline.cc/api/public/v1/resume
